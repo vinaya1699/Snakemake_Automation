@@ -1,0 +1,6 @@
+samples:
+  Zinc_Spleen: Zinc_Spleen
+  Control_Spleen: Control_Spleen
+
+organism:
+  Mus_musculus: Mus_musculus
