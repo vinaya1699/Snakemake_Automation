@@ -1,6 +1,9 @@
 samples:
-  Zinc_Spleen: Zinc_Spleen
-  Control_Spleen: Control_Spleen
+  sample1: sample1
+  sample2: sample2
 
 organism:
-  Mus_musculus: Mus_musculus
+  reference_organism: reference_organism
+
+threads:
+  threads: 10
