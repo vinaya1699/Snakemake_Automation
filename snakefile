@@ -38,10 +38,12 @@ rule Indexing_of_ref_Genome:
     input:
         "0_Reference_Genome/{organism}.fasta"
     output:
-        expand("0_Reference_Genome/{{organism}}.{i}.ht2", i=range(1,9))
-    threads: 8
+        "0_Reference_Genome/{organism}.{idx}.ht2"
+    params:
+        idxs = range(1,9)
     shell:
-        "hisat2-build {input} 0_Reference_Genome/{wildcards.organism}"
+        "hisat2-build {input} 0_Reference_Genome/{wildcards.organism}"        
+        
 
 rule Quality_check:
     input:
@@ -54,7 +56,6 @@ rule Quality_check:
         zip_r2  = "1_RawData_Fastqc/{sample}_R2_fastqc.zip"
     log:
         "logs/fastqc/{sample}.log"
-    threads: 10
     shell:
         """
         fastqc -t {threads} {input.r1} {input.r2} -o 1_RawData_Fastqc/ > {log} 2>&1
@@ -71,7 +72,7 @@ rule Trimming:
         json = "2_CleanData/{sample}.json"
     log:
         "logs/fastp/{sample}.log"
-    threads: 20
+
     shell:
         """
         fastp \
@@ -99,7 +100,7 @@ rule Quality_check_clean_files:
         zip_r2  = "2_CleanData_Fastqc/{sample}_R2_fastqc.zip"
     log:
         "logs/fastqc/{sample}_clean.log"
-    threads: threads
+
     shell:
         """
         fastqc -t {threads} {input.r1} {input.r2} -o 2_CleanData_Fastqc/ > {log} 2>&1
@@ -115,7 +116,7 @@ rule Alignment_of_clean_files:
         
     log:
         "logs/Alignment/{sample}_Alignment.log"
-    threads: threads
+    
     shell:
         """
         hisat2 -p {threads} -x 0_Reference_Genome/{ORGANISM} -1 {input.r1} -2 {input.r2} | samtools sort -@ {threads} -o {output.mapped} > {log} 2>&1
@@ -127,7 +128,7 @@ rule Raw_Read_Count_Input:
         bams = expand("3_Alignment/{sample}.bam", sample=SAMPLES)
     output:
         sample_names = "3_Alignment/Bam_files.txt"
-    threads: threads
+    
     shell:
         """
         ls {input.bams} > {output.sample_names}
@@ -140,7 +141,7 @@ rule Raw_Read_Count_Generation:
         RC = "4_Featurecount_WTA/counts.txt"
     log:
         "logs/Featurecount/Featurecount.log"
-    threads: threads
+    
     params:
         gtf = lambda wildcards: f"0_Reference_Genome/{list(config['organism'].keys())[0]}.gtf"
     shell:
