@@ -26,6 +26,7 @@ conda activate snakemake
 
 
 🚀 Usage
+```
 1️⃣ Clone this repository
 git clone https://github.com/vinaya1699/Snakemake_Automation.git
 cd Snakemake_Automation
