@@ -6,7 +6,7 @@ configfile: "config.yaml"
 
 SAMPLES = list(config["samples"].keys())
 ORGANISM = list(config["organism"].keys())
-threads: list(config["threads"].keys())
+THREADS = config["threads"]["threads"] 
 
 rule all:
     input:
@@ -29,10 +29,10 @@ rule all:
         expand("3_Alignment/{sample}.bam", sample=SAMPLES),
         
         # RC Input outputs
-        expand("3_Alignment/Bam_files.txt"),
+        "3_Alignment/Bam_files.txt",
         
         # Read Count Generation
-        expand("4_Featurecount_WTA/counts.txt")
+        "4_Featurecount_WTA/counts.txt"
         
 rule Indexing_of_ref_Genome:
     input:
@@ -100,7 +100,6 @@ rule Quality_check_clean_files:
         zip_r2  = "2_CleanData_Fastqc/{sample}_R2_fastqc.zip"
     log:
         "logs/fastqc/{sample}_clean.log"
-
     shell:
         """
         fastqc -t {threads} {input.r1} {input.r2} -o 2_CleanData_Fastqc/ > {log} 2>&1
@@ -111,42 +110,32 @@ rule Alignment_of_clean_files:
         r1 = "2_CleanData/{sample}_R1.fq.gz",
         r2 = "2_CleanData/{sample}_R2.fq.gz"
     output:
-        mapped = "3_Alignment/{sample}.bam",
-        stats = "3_Alignment/{sample}_Mapping_Stat.txt"
-        
+        "3_Alignment/{sample}.bam"
     log:
         "logs/Alignment/{sample}_Alignment.log"
-    
+    threads: THREADS
     shell:
         """
-        hisat2 -p {threads} -x 0_Reference_Genome/{ORGANISM} -1 {input.r1} -2 {input.r2} | samtools sort -@ {threads} -o {output.mapped} > {log} 2>&1
-        samtools flagstat {output.mapped} > {output.stats}
+        hisat2 -p {threads} -x 0_Reference_Genome/{ORGANISM} -1 {input.r1} -2 {input.r2} | samtools sort -@ {threads} -o {output} > {log} 2>&1
         """
 
 rule Raw_Read_Count_Input:
     input:
-        bams = expand("3_Alignment/{sample}.bam", sample=SAMPLES)
+        expand("3_Alignment/{sample}.bam", sample=SAMPLES)
     output:
-        sample_names = "3_Alignment/Bam_files.txt"
-    
+        "3_Alignment/Bam_files.txt"
     shell:
-        """
-        ls {input.bams} > {output.sample_names}
-        """
-        
+        "ls {input} > {output}"
+
 rule Raw_Read_Count_Generation:
     input:
-        input_RC = "3_Alignment/Bam_files.txt"
+        "3_Alignment/Bam_files.txt"
     output:
-        RC = "4_Featurecount_WTA/counts.txt"
+        "4_Featurecount_WTA/counts.txt"
     log:
         "logs/Featurecount/Featurecount.log"
-    
-    params:
-        gtf = lambda wildcards: f"0_Reference_Genome/{list(config['organism'].keys())[0]}.gtf"
+    threads: config["threads"]["threads"]
     shell:
         """
-        featureCounts -T {threads} -p -t gene -g gene_id -a {params.gtf} -o {output.RC} $(cat {input.input_RC}) > {log} 2>&1
+        featureCounts -T {threads} -p -t gene -g gene_id -a 0_Reference_Genome/{ORGANISM[0]}.gtf -o {output} $(cat {input}) > {log} 2>&1
         """
-        
-print(f"\n🚀 Here ends the automated transcriptomics analysis pipeline! [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]\n")
