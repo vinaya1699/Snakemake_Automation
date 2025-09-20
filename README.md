@@ -14,6 +14,7 @@ It is designed to:
 ✔️ Ensure reproducibility  
 ✔️ Scale efficiently with available computing resources  
 
+“All required software tools for transcriptomics analysis, including fastp, FastQC, MultiQC, HISAT2, Subread (for featureCounts), and SAMtools, have been successfully installed and are ready for use.”
 ---
 
 ## ⚡ Installation   and Usage
