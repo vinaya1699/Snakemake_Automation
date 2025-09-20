@@ -24,7 +24,7 @@ Install **Snakemake** via Conda:
 conda create -c conda-forge -c bioconda -n snakemake snakemake
 conda activate snakemake
 
-
+```
 🚀 Usage
 ```
 1️⃣ Clone this repository
