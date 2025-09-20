@@ -39,8 +39,9 @@ snakemake -j 2
 
 1) -j → Number of parallel jobs (adjust to available CPU cores).
 
+```
 ⚙️ Example Configuration File
-
+```
 Define your samples, organism, and resources in config.yaml:
 
 samples:
@@ -52,24 +53,15 @@ organism:
 
 threads:
   threads: 10
-
+```
 🖼️ Workflow Diagram
+```
 graph TD;
     A[Raw Reads] --> B[Quality Control]
     B --> C[Alignment]
     C --> D[Read Counting]
     D --> E[Differential Expression (future release)]
 
-📊 Features
-
-🔄 Automated Snakemake pipeline
-
-🖥️ Supports multi-threading & parallel execution
-
-📁 Modular workflow structure
-
-🧩 Easily extendable for downstream analyses (DESeq2, visualization, etc.)
-
-
+```
 👩‍💻 Maintained by Vinaya Kadam (https://in.linkedin.com/in/vinaya-kadam-28a71a192)
 💡 Contributions, issues, and feature requests are welcome!
