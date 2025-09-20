@@ -25,7 +25,7 @@ conda create -c conda-forge -c bioconda -n snakemake snakemake
 conda activate snakemake
 
 
-**🚀 Usage**
+🚀 Usage
 1️⃣ Clone this repository
 git clone https://github.com/vinaya1699/Snakemake_Automation.git
 cd Snakemake_Automation
