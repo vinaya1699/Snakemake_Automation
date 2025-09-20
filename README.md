@@ -16,7 +16,7 @@ It is designed to:
 
 ---
 
-## ⚡ Installation  
+## ⚡ Installation   and Usage
 
 Install **Snakemake** via Conda:  
 
